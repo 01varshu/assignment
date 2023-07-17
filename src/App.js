@@ -1,25 +1,43 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState } from "react";
+import "./App.css";
 
-function App() {
+  function App() {
+  const [userDetails, setUserDetails] = useState();
+
+  function onInputChange(event) {
+    const input = event.target.value;
+    setTimeout(async () => {
+      const userName = event.target.value;
+      if (userName === input) {
+        try {
+          const data = await fetch(`https://api.github.com/users/${userName}`);
+          const userDetails = await data.json();
+          console.log(userDetails);
+          setUserDetails(userDetails);
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    }, 1000);
+  }
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <input onChange={onInputChange}></input>
+      {userDetails && (
+        <div>
+          Result:
+          {userDetails.name && <p>Name: {userDetails.name}</p>}
+          {userDetails.company && <p>Company:{userDetails.company}</p>}
+          {userDetails.email && <p>Email: {userDetails.email}</p>}
+          {userDetails.gravatar_id && (
+            <img src={userDetails.gravatar_id} alt="Img Not Avavilable"></img>
+          )}
+          {userDetails.followers && <p>Followers: {userDetails.followers}</p>}
+          {userDetails.following && <p>Following: {userDetails.following}</p>}
+        </div>
+      )}
     </div>
   );
 }
-
 export default App;
